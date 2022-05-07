@@ -22,7 +22,6 @@ fn main() {
     "CLANG_BASE_PATH",
     "DENO_TRYBUILD",
     "DOCS_RS",
-    "GENERATE_COMPDB",
     "GN",
     "GN_ARGS",
     "HOST",
@@ -643,36 +642,6 @@ fn ninja(gn_out_dir: &Path, maybe_env: Option<NinjaEnv>) -> Command {
   cmd
 }
 
-fn generate_compdb(
-  gn_out_dir: &Path,
-  target: &str,
-  output_path: Option<&Path>,
-) {
-  let mut cmd = Command::new("python");
-  cmd.arg("tools/generate_compdb.py");
-  cmd.arg("-p");
-  cmd.arg(&gn_out_dir);
-  cmd.arg(target);
-  cmd.arg("-o");
-  cmd.arg(output_path.unwrap_or_else(|| Path::new("compile_commands.json")));
-  cmd.envs(env::vars());
-
-  // TODO(ry) The following block is very sloppy. Clean up or remove.
-  if let Ok(ninja_path) = env::var("NINJA") {
-    let ninja_folder = Path::new(&ninja_path).parent().unwrap();
-    // Add `ninja_folder` to the PATH envvar.
-    let original_path = env::var_os("PATH").unwrap();
-    let new_path = env::join_paths(
-      env::split_paths(&original_path)
-        .chain(std::iter::once(ninja_folder.to_owned())),
-    )
-    .unwrap();
-    cmd.env("PATH", new_path);
-  }
-
-  assert!(cmd.status().unwrap().success());
-}
-
 pub type GnArgs = Vec<String>;
 
 pub fn maybe_gen(manifest_dir: &str, gn_args: GnArgs) -> PathBuf {
@@ -717,16 +686,6 @@ pub fn build(target: &str, maybe_env: Option<NinjaEnv>) {
     .status()
     .unwrap()
     .success());
-
-  if let Some(compdb_env) = std::env::var_os("GENERATE_COMPDB") {
-    // Only use compdb_path if it's not empty.
-    let compdb_path = if !compdb_env.is_empty() {
-      Some(Path::new(&compdb_env))
-    } else {
-      None
-    };
-    generate_compdb(&gn_out_dir, target, compdb_path);
-  }
 
   // TODO This is not sufficent. We need to use "gn desc" to query the target
   // and figure out what else we need to add to the link.
