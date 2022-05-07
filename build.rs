@@ -235,12 +235,12 @@ fn maybe_clone_repo(dest: &str, repo: &str) {
 fn maybe_install_sysroot(arch: &str) {
   let sysroot_path = format!("build/linux/debian_sid_{}-sysroot", arch);
   if !PathBuf::from(sysroot_path).is_dir() {
-    let status = Command::new("python")
+    assert!(Command::new("python")
       .arg("./build/linux/sysroot_scripts/install-sysroot.py")
       .arg(format!("--arch={}", arch))
       .status()
-      .unwrap_or_else(|_| panic!("sysroot download failed: {}", arch));
-    assert!(status.success());
+      .unwrap()
+      .success());
   }
 }
 
@@ -272,13 +272,13 @@ fn download_ninja_gn_binaries() {
   let ninja = ninja.with_extension("exe");
 
   if !gn.exists() || !ninja.exists() {
-    let status = Command::new("python")
+    assert!(Command::new("python")
       .arg("./tools/ninja_gn_binaries.py")
       .arg("--dir")
       .arg(&target_dir)
       .status()
-      .expect("ninja_gn_binaries.py download failed");
-    assert!(status.success());
+      .unwrap()
+      .success());
   }
   assert!(gn.exists());
   assert!(ninja.exists());
@@ -515,13 +515,13 @@ fn find_compatible_system_clang() -> Option<PathBuf> {
 fn clang_download() -> PathBuf {
   let clang_base_path = build_dir().join("clang");
   println!("clang_base_path {}", clang_base_path.display());
-  let status = Command::new("python")
+  assert!(Command::new("python")
     .arg("./tools/clang/scripts/update.py")
     .arg("--output-dir")
     .arg(&clang_base_path)
     .status()
-    .expect("clang download failed");
-  assert!(status.success());
+    .unwrap()
+    .success());
   assert!(clang_base_path.exists());
   clang_base_path
 }
