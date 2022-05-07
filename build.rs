@@ -656,9 +656,8 @@ fn generate_compdb(
   cmd.arg("-o");
   cmd.arg(output_path.unwrap_or_else(|| Path::new("compile_commands.json")));
   cmd.envs(env::vars());
-  cmd.stdout(Stdio::inherit());
-  cmd.stderr(Stdio::inherit());
 
+  // TODO(ry) The following block is very sloppy. Clean up or remove.
   if let Ok(ninja_path) = env::var("NINJA") {
     let ninja_folder = Path::new(&ninja_path).parent().unwrap();
     // Add `ninja_folder` to the PATH envvar.
@@ -671,7 +670,7 @@ fn generate_compdb(
     cmd.env("PATH", new_path);
   }
 
-  run(&mut cmd, "python");
+  assert!(cmd.status().unwrap().success());
 }
 
 pub type GnArgs = Vec<String>;
@@ -690,15 +689,17 @@ pub fn maybe_gen(manifest_dir: &str, gn_args: GnArgs) -> PathBuf {
       dirs.root.display(),
       gn_out_dir.display()
     );
-    let mut cmd = Command::new(gn());
-    cmd.arg(format!("--root={}", dirs.root.display()));
-    cmd.arg("gen");
-    cmd.arg(&gn_out_dir);
-    cmd.arg("--args=".to_owned() + &args);
-    cmd.stdout(Stdio::inherit());
-    cmd.stderr(Stdio::inherit());
-    cmd.envs(env::vars());
-    run(&mut cmd, "gn gen");
+    assert!(Command::new(gn())
+      .arg(format!("--root={}", dirs.root.display()))
+      .arg("gen")
+      .arg(&gn_out_dir)
+      .arg("--args=".to_owned() + &args)
+      .stdout(Stdio::inherit())
+      .stderr(Stdio::inherit())
+      .envs(env::vars())
+      .status()
+      .unwrap()
+      .success());
   }
   gn_out_dir
 }
@@ -711,9 +712,11 @@ pub fn build(target: &str, maybe_env: Option<NinjaEnv>) {
   // This helps Rust source files locate the snapshot, source map etc.
   println!("cargo:rustc-env=GN_OUT_DIR={}", gn_out_dir.display());
 
-  let mut cmd = ninja(&gn_out_dir, maybe_env);
-  cmd.arg(target);
-  run(&mut cmd, "ninja");
+  assert!(ninja(&gn_out_dir, maybe_env)
+    .arg(target)
+    .status()
+    .unwrap()
+    .success());
 
   if let Some(compdb_env) = std::env::var_os("GENERATE_COMPDB") {
     // Only use compdb_path if it's not empty.
@@ -742,31 +745,6 @@ fn rerun_if_changed(out_dir: &Path, maybe_env: Option<NinjaEnv>, target: &str) {
     assert!(p.exists());
     println!("cargo:rerun-if-changed={}", p.display());
   }
-}
-
-fn run(cmd: &mut Command, program: &str) {
-  use std::io::ErrorKind;
-  println!("running: {:?}", cmd);
-  let status = match cmd.status() {
-    Ok(status) => status,
-    Err(ref e) if e.kind() == ErrorKind::NotFound => {
-      fail(&format!(
-        "failed to execute command: {}\nis `{}` not installed?",
-        e, program
-      ));
-    }
-    Err(e) => fail(&format!("failed to execute command: {}", e)),
-  };
-  if !status.success() {
-    fail(&format!(
-      "command did not execute successfully, got: {}",
-      status
-    ));
-  }
-}
-
-fn fail(s: &str) -> ! {
-  panic!("\n{}\n\nbuild script failed, must exit now", s)
 }
 
 fn ninja_get_deps(
