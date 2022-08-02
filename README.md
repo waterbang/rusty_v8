@@ -8,21 +8,32 @@ V8 Version: 10.5.218.1
 
 ## 更改流程
 
-下载: https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517
+下载: <https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517>
 解压到：tools目录下
-下载: https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-llvmorg-15-init-9576-g75f9e83a-3.tgz
-解压到：tools/clang  target/aarch64-linux-android/debug
-下载: https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/3dc473ad845d3ae810c3e1be6f377e3eaa301c6e/debian_bullseye_arm64_sysroot.tar.xz
+下载: <https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-llvmorg-15-init-9576-g75f9e83a-3.tgz>
+解压到：tools/clang  
+下载: <https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/3dc473ad845d3ae810c3e1be6f377e3eaa301c6e/debian_bullseye_arm64_sysroot.tar.xz>
 解压到：build/linux/debian_bullseye_arm64-sysroot
 
-然后在build.rs里注释：
-135，136，170，171，182~199 注释掉
-
-下载：git clone https://chromium.googlesource.com/chromium/src/third_party/android_platform
-下载：git clone https://github.com/denoland/android_ndk.git
-下载：git clone https://chromium.googlesource.com/catapult.git
+下载：git clone <https://chromium.googlesource.com/chromium/src/third_party/android_platform>
+下载：git clone <https://github.com/denoland/android_ndk.git>
+下载：git clone <https://chromium.googlesource.com/catapult.git>
 到 third_party
 
+### 问题
+
+> ERROR at //build/config/mac/mac_sdk.gni:95:31: No value named "xcode_build" in scope "_mac_sdk_result"
+>[v8 0.48.0] xcode_build =_mac_sdk_result.xcode_build
+
+安装 xcode
+
+>ERROR at dynamically parsed input that //build/config/mac/mac_sdk.gni:93:19 loaded :1:15: This is not a valid number.xcode_build=11C505
+
+File "/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_info.py", line 71
+修改为 `int[lines[-1].split(](-1),16)`
+
+
+> fatal error: 'features.h' file not found
 
 
 ## Goals
@@ -72,7 +83,7 @@ We default to release builds of `v8` due to performance & CI reasons in `deno`.
 
 Tells the build script where to get binary builds from. Understands
 `http://` and `https://` URLs, and file paths. The default is
-https://github.com/denoland/rusty_v8/releases/download.
+<https://github.com/denoland/rusty_v8/releases/download>.
 
 File-based mirrors are good for using cached downloads. First, point
 the environment variable to a suitable location:
