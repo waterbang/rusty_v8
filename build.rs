@@ -239,7 +239,7 @@ fn maybe_clone_repo(dest: &str, repo: &str) {
 fn maybe_install_sysroot(arch: &str) {
   let sysroot_path = format!("build/linux/debian_sid_{}-sysroot", arch);
   if !PathBuf::from(sysroot_path).is_dir() {
-    assert!(Command::new("python")
+    assert!(Command::new("python3")
       .arg("./build/linux/sysroot_scripts/install-sysroot.py")
       .arg(format!("--arch={}", arch))
       .status()
@@ -276,7 +276,7 @@ fn download_ninja_gn_binaries() {
   let ninja = ninja.with_extension("exe");
 
   if !gn.exists() || !ninja.exists() {
-    assert!(Command::new("python")
+    assert!(Command::new("python3")
       .arg("./tools/ninja_gn_binaries.py")
       .arg("--dir")
       .arg(&target_dir)
@@ -378,10 +378,10 @@ fn download_file(url: String, filename: PathBuf) {
     std::fs::remove_file(&tmpfile).unwrap();
   }
 
-  // Try downloading with python first. Python is a V8 build dependency,
+  // Try downloading with python3 first. python3 is a V8 build dependency,
   // so this saves us from adding a Rust HTTP client dependency.
   println!("Downloading {}", url);
-  let status = Command::new("python")
+  let status = Command::new("python3")
     .arg("./tools/download_file.py")
     .arg("--url")
     .arg(&url)
@@ -389,12 +389,12 @@ fn download_file(url: String, filename: PathBuf) {
     .arg(&tmpfile)
     .status();
 
-  // Python is only a required dependency for `V8_FROM_SOURCE` builds.
-  // If python is not available, try falling back to curl.
+  // python3 is only a required dependency for `V8_FROM_SOURCE` builds.
+  // If python3 is not available, try falling back to curl.
   let status = match status {
     Ok(status) if status.success() => status,
     _ => {
-      println!("Python downloader failed, trying with curl.");
+      println!("python3 downloader failed, trying with curl.");
       Command::new("curl")
         .arg("-L")
         .arg("-s")
@@ -529,7 +529,7 @@ fn find_compatible_system_clang() -> Option<PathBuf> {
 fn clang_download() -> PathBuf {
   let clang_base_path = build_dir().join("clang");
   println!("clang_base_path {}", clang_base_path.display());
-  assert!(Command::new("python")
+  assert!(Command::new("python3")
     .arg("./tools/clang/scripts/update.py")
     .arg("--output-dir")
     .arg(&clang_base_path)

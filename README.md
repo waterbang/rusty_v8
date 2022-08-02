@@ -6,6 +6,25 @@ V8 Version: 10.5.218.1
 [![crates](https://img.shields.io/crates/v/v8.svg)](https://crates.io/crates/v8)
 [![docs](https://docs.rs/v8/badge.svg)](https://docs.rs/v8)
 
+## 更改流程
+
+下载: https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517
+解压到：tools目录下
+下载: https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-llvmorg-15-init-9576-g75f9e83a-3.tgz
+解压到：tools/clang  target/aarch64-linux-android/debug
+下载: https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/3dc473ad845d3ae810c3e1be6f377e3eaa301c6e/debian_bullseye_arm64_sysroot.tar.xz
+解压到：build/linux/debian_bullseye_arm64-sysroot
+
+然后在build.rs里注释：
+135，136，170，171，182~199 注释掉
+
+下载：git clone https://chromium.googlesource.com/chromium/src/third_party/android_platform
+下载：git clone https://github.com/denoland/android_ndk.git
+下载：git clone https://chromium.googlesource.com/catapult.git
+到 third_party
+
+
+
 ## Goals
 
 1. Provide high quality Rust bindings to [V8's C++

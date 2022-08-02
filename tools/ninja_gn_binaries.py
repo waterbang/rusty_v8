@@ -12,6 +12,10 @@ import tarfile
 import tempfile
 import time
 
+
+os.environ["HTTP_PROXY"] = 'http://127.0.0.1:7890'
+os.environ["HTTPS_PROXY"] = 'https://127.0.0.1:7890'
+
 try:
     from urllib2 import HTTPError, URLError, urlopen
 except ImportError:  # For Py3 compatibility
