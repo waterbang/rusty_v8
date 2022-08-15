@@ -1,5 +1,5 @@
-FROM ghcr.io/cross-rs/aarch64-linux-android:edge
-
+# FROM ghcr.io/cross-rs/aarch64-linux-android:edge
+FROM waterbang/aarch64-linux-android:v1
 # ARG DEBIAN_FRONTEND=noninteractive
 # ENV TZ=Asia/Shanghai
 
@@ -25,7 +25,7 @@ RUN \
 	&& rm -rf /chromium_build \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN chmod +x /sccache-v0.2.15-x86_64-unknown-linux-musl/sccache
+RUN chmod +x /sccache-v0.2.15-x86_64-linux-android/sccache
 
-ENV SCCACHE=/sccache-v0.2.15-x86_64-unknown-linux-musl/sccache
+ENV SCCACHE=/sccache-v0.2.15-x86_64-linux-android/sccache
 ENV SCCACHE_DIR=./target/sccache

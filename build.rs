@@ -24,6 +24,7 @@ fn main() {
     "CLANG_BASE_PATH",
     "DENO_TRYBUILD",
     "DOCS_RS",
+    "GENERATE_COMPDB",
     "GN",
     "GN_ARGS",
     "HOST",
@@ -94,7 +95,7 @@ fn build_v8() {
   env::set_var("DEPOT_TOOLS_WIN_TOOLCHAIN", "0");
 
   // cargo publish doesn't like pyc files.
-  env::set_var("PYTHONDONTWRITEBYTECODE", "1");
+  env::set_var("python3DONTWRITEBYTECODE", "1");
 
   // git submodule update --init --recursive
   let libcxx_src = PathBuf::from("buildtools/third_party/libc++/trunk/src");
@@ -120,6 +121,9 @@ fn build_v8() {
   if cfg!(not(feature = "use_custom_libcxx")) {
     gn_args.push("use_custom_libcxx=false".to_string());
   }
+  if !is_debug() {
+    gn_args.push("v8_enable_handle_zapping=false".to_string());
+  }
 
   // Fix GN's host_cpu detection when using x86_64 bins on Apple Silicon
   if cfg!(target_os = "macos") && cfg!(target_arch = "aarch64") {
@@ -129,13 +133,17 @@ fn build_v8() {
   if let Some(clang_base_path) = find_compatible_system_clang() {
     println!("clang_base_path {}", clang_base_path.display());
     gn_args.push(format!("clang_base_path={:?}", clang_base_path));
+    // TODO: Dedupe this with the one from cc_wrapper()
     gn_args.push("treat_warnings_as_errors=false".to_string());
+    // we can't use chromiums clang plugins with a system clang
+    gn_args.push("clang_use_chrome_plugins=false".to_string());
   } else {
     println!("using Chromiums clang");
     let clang_base_path = clang_download();
     gn_args.push(format!("clang_base_path={:?}", clang_base_path));
 
     if cfg!(target_os = "android") && cfg!(target_arch = "aarch64") {
+      gn_args.push("clang_use_chrome_plugins=false".to_string());
       gn_args.push("treat_warnings_as_errors=false".to_string());
     }
   }
@@ -172,6 +180,7 @@ fn build_v8() {
     };
 
     if target_triple == "aarch64-linux-android" {
+      gn_args.push("is_component_build=false".to_string());
       gn_args.push(r#"v8_target_cpu="arm64""#.to_string());
       gn_args.push(r#"target_os="android""#.to_string());
 

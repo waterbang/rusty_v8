@@ -6,6 +6,16 @@ V8 Version: 10.5.218.1
 [![crates](https://img.shields.io/crates/v/v8.svg)](https://crates.io/crates/v8)
 [![docs](https://docs.rs/v8/badge.svg)](https://docs.rs/v8)
 
+## 命令
+
+```shell
+
+docker build --target x86_64-linux-android --tag denoland/rusty_v8:x86_64-linux-android .
+
+
+V8_FROM_SOURCE=1 cross build -vv --target aarch64-linux-android
+```
+
 ## 更改流程
 
 1. 下载: <https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517>
@@ -38,6 +48,15 @@ File "/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_
 检查  `--sysroot=../../../../third_party/android_ndk/toolchains/llvm/prebuilt/darwin-x86_64/sysroot`
 观察ndk,是否没有`darwin-x86_64`,把目录下：
 `third_party/android_ndk/toolchains/llvm/prebuilt/`的其他版本复制一分重命名为`darwin-x86_64`，或者是别的系统名。
+
+
+### <urlopen error [Errno 111] Connection refused>
+
+ /Applications/Python\ 3.6/Install\ Certificates.command 
+
+### 其他参考
+
+<https://www.jianshu.com/p/435fc02819a0>
 
 ## Goals
 
