@@ -95,7 +95,7 @@ fn build_v8() {
   env::set_var("DEPOT_TOOLS_WIN_TOOLCHAIN", "0");
 
   // cargo publish doesn't like pyc files.
-  env::set_var("pythonDONTWRITEBYTECODE", "1");
+  env::set_var("PYTHONDONTWRITEBYTECODE", "1");
 
   // git submodule update --init --recursive
   let libcxx_src = PathBuf::from("buildtools/third_party/libc++/trunk/src");
@@ -248,7 +248,7 @@ fn maybe_clone_repo(dest: &str, repo: &str) {
 fn maybe_install_sysroot(arch: &str) {
   let sysroot_path = format!("build/linux/debian_sid_{}-sysroot", arch);
   if !PathBuf::from(sysroot_path).is_dir() {
-    assert!(Command::new("python")
+    assert!(Command::new("python3")
       .arg("./build/linux/sysroot_scripts/install-sysroot.py")
       .arg(format!("--arch={}", arch))
       .status()
@@ -285,7 +285,7 @@ fn download_ninja_gn_binaries() {
   let ninja = ninja.with_extension("exe");
 
   if !gn.exists() || !ninja.exists() {
-    assert!(Command::new("python")
+    assert!(Command::new("python3")
       .arg("./tools/ninja_gn_binaries.py")
       .arg("--dir")
       .arg(&target_dir)
@@ -390,7 +390,7 @@ fn download_file(url: String, filename: PathBuf) {
   // Try downloading with python first. python is a V8 build dependency,
   // so this saves us from adding a Rust HTTP client dependency.
   println!("Downloading {}", url);
-  let status = Command::new("python")
+  let status = Command::new("python3")
     .arg("./tools/download_file.py")
     .arg("--url")
     .arg(&url)
@@ -538,7 +538,7 @@ fn find_compatible_system_clang() -> Option<PathBuf> {
 fn clang_download() -> PathBuf {
   let clang_base_path = build_dir().join("clang");
   println!("clang_base_path {}", clang_base_path.display());
-  assert!(Command::new("python")
+  assert!(Command::new("python3")
     .arg("./tools/clang/scripts/update.py")
     .arg("--output-dir")
     .arg(&clang_base_path)

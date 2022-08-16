@@ -18,7 +18,19 @@ V8_FROM_SOURCE=1 cross build -vv --target aarch64-linux-android
 
 ## 修复流程
 
-下载[libunwind](https://github.com/libunwind/libunwind/releases/tag/v1.6.2)，放到third_party
+1. 修改build.rs 里的python ,全部改成python3
+
+2. 修改文件build/print_clang_major_version.py，第11行，改成：
+
+```python
+major_version = int(re.search(b"version (\d+)\.\d+\.\d+", output).group(1))
+```
+
+3. 修改：/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_info.py,71行
+
+```python
+settings['xcode_build'] = int[lines[-1].split((-1),16)]
+```
 
 ## 下载地址
 
@@ -57,7 +69,7 @@ export NINJA=/Users/mac/Desktop/waterbang/project/rust/rusty_v8/tools/ninja
 #### ERROR at dynamically parsed input that //build/config/mac/mac_sdk.gni:93:19 loaded :1:15: This is not a valid number.xcode_build=11C505
 
 File "/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_info.py", line 71
-修改为 `int[lines[-1].split(](-1),16)`
+修改为 `settings['xcode_build'] = int[lines[-1].split((-1),16)]`
 
 #### fatal error: 'features.h' file not found
 
