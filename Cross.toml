@@ -1,6 +1,6 @@
 [target.aarch64-linux-android]
 # image = "ghcr.io/cross-rs/aarch64-linux-android:edge"
-image = "waterbang/aarch64-linux-android:v1"
+image = "waterbang/aarch64-linux-android:v2"
 
 [container.opts]
 --network = "host"

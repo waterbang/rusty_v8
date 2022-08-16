@@ -16,7 +16,11 @@ docker build --target x86_64-linux-android --tag denoland/rusty_v8:x86_64-linux-
 V8_FROM_SOURCE=1 cross build -vv --target aarch64-linux-android
 ```
 
-## 更改流程
+## 修复流程
+
+下载[libunwind](https://github.com/libunwind/libunwind/releases/tag/v1.6.2)，放到third_party
+
+## 下载地址
 
 1. 下载: <https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517>
 解压到：tools目录下
@@ -31,6 +35,18 @@ V8_FROM_SOURCE=1 cross build -vv --target aarch64-linux-android
 5. 下载：git clone <https://github.com/denoland/android_ndk.git>
 6. 下载：git clone <https://chromium.googlesource.com/catapult.git>
 到 third_party
+
+### 环境配置
+
+```shell
+# 指向自己的ndk
+export CLANG_BASE_PATH=/Users/mac/Library/Android/sdk/ndk/21.3.6528147
+
+export GN=/Users/mac/Desktop/waterbang/project/rust/rusty_v8/tools/gn
+
+export NINJA=/Users/mac/Desktop/waterbang/project/rust/rusty_v8/tools/ninja
+
+```
 
 ### 问题
 
@@ -49,10 +65,10 @@ File "/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_
 观察ndk,是否没有`darwin-x86_64`,把目录下：
 `third_party/android_ndk/toolchains/llvm/prebuilt/`的其他版本复制一分重命名为`darwin-x86_64`，或者是别的系统名。
 
-
 ### <urlopen error [Errno 111] Connection refused>
 
- /Applications/Python\ 3.6/Install\ Certificates.command 
+命令增加 ：V8_FROM_SOURCE=1  从头构建v8,不然官方的拉不到
+ <!-- /Applications/Python\ 3.6/Install\ Certificates.command  -->
 
 ### 其他参考
 

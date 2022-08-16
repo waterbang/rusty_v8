@@ -1,0 +1,12 @@
+**/*.rs.bk
+**/*.orig
+
+/.vscode/
+/.*
+/target/
+
+third_party
+v8
+build
+buildtools
+*
