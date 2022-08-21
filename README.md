@@ -12,9 +12,14 @@ V8 Version: 10.5.218.1
 
 docker build --target x86_64-linux-android --tag denoland/rusty_v8:x86_64-linux-android .
 
+V8_FROM_SOURCE=1 cargo build -vv --target x86_64-linux-android --release
 
-V8_FROM_SOURCE=1 cross build -vv --target aarch64-linux-android
+V8_FROM_SOURCE=1 cargo build -vv --target aarch64-linux-android --release
 ```
+
+## 不想编译？
+
+直接点击[waterDown](https://download.waterbang.top/s/vMFe?path=%2F)
 
 ## 修复流程
 
