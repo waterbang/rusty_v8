@@ -86,6 +86,11 @@ File "/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_
 
 命令增加 ：V8_FROM_SOURCE=1  从头构建v8,不然官方的拉不到
  <!-- /Applications/Python\ 3.6/Install\ Certificates.command  -->
+ 
+### fatal error: 'features.h' file not found
+
+检查 地址`./third_party/android_ndk/toolchains/llvm/prebuilt/darwin-x86_64/`
+查看darwin-x86_64是否存在，不存在则复制本地的NDK的darwin-x86_64文件夹
 
 ### 其他参考
 
