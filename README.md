@@ -6,6 +6,97 @@ V8 Version: 10.6.194.5
 [![crates](https://img.shields.io/crates/v/v8.svg)](https://crates.io/crates/v8)
 [![docs](https://docs.rs/v8/badge.svg)](https://docs.rs/v8)
 
+## 命令
+
+```shell
+
+docker build --target x86_64-linux-android --tag denoland/rusty_v8:x86_64-linux-android .
+
+V8_FROM_SOURCE=1 cargo build -vv --target x86_64-linux-android --release
+
+V8_FROM_SOURCE=1 cargo build -vv --target aarch64-linux-android --release
+```
+
+## 不想编译？
+
+直接点击[waterDown](https://download.waterbang.top/s/vMFe?path=%2F)
+
+## 修复流程
+
+1. 修改build.rs 里的python ,全部改成python3
+
+2. 修改文件build/print_clang_major_version.py，第11行，改成：
+
+```python
+major_version = int(re.search(b"version (\d+)\.\d+\.\d+", output).group(1))
+```
+
+3. 修改：/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_info.py,71行
+
+```python
+settings['xcode_build'] = int[lines[-1].split((-1),16)]
+```
+
+## 下载地址
+
+1. 下载: <https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517>
+解压到：tools目录下
+
+2. 下载: <https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-llvmorg-15-init-9576-g75f9e83a-3.tgz>
+解压到：tools/clang  
+
+3. 下载: <https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/3dc473ad845d3ae810c3e1be6f377e3eaa301c6e/debian_bullseye_arm64_sysroot.tar.xz>
+解压到：build/linux/debian_bullseye_arm64-sysroot
+
+4. 下载：git clone <https://chromium.googlesource.com/chromium/src/third_party/android_platform>
+5. 下载：git clone <https://github.com/denoland/android_ndk.git>
+6. 下载：git clone <https://chromium.googlesource.com/catapult.git>
+到 third_party
+
+### 环境配置
+
+```shell
+# 指向自己的ndk
+export CLANG_BASE_PATH=/Users/mac/Library/Android/sdk/ndk/21.3.6528147
+
+export GN=/Users/mac/Desktop/waterbang/project/rust/rusty_v8/tools/gn
+
+export NINJA=/Users/mac/Desktop/waterbang/project/rust/rusty_v8/tools/ninja
+
+```
+
+### 问题
+
+#### ERROR at //build/config/mac/mac_sdk.gni:95:31: No value named "xcode_build" in scope "_mac_sdk_result"[v8 0.48.0] xcode_build =_mac_sdk_result.xcode_build
+
+安装 xcode
+
+#### ERROR at dynamically parsed input that //build/config/mac/mac_sdk.gni:93:19 loaded :1:15: This is not a valid number.xcode_build=11C505
+
+File "/Users/mac/Desktop/waterbang/project/rust/rusty_v8/build/config/apple/sdk_info.py", line 71
+修改为 `settings['xcode_build'] = int[lines[-1].split((-1),16)]`
+
+#### fatal error: 'features.h' file not found
+
+检查  `--sysroot=../../../../third_party/android_ndk/toolchains/llvm/prebuilt/darwin-x86_64/sysroot`
+观察ndk,是否没有`darwin-x86_64`,把目录下：
+`third_party/android_ndk/toolchains/llvm/prebuilt/`的其他版本复制一分重命名为`darwin-x86_64`，或者是别的系统名。
+
+### <urlopen error [Errno 111] Connection refused>
+
+命令增加 ：V8_FROM_SOURCE=1  从头构建v8,不然官方的拉不到
+ <!-- /Applications/Python\ 3.6/Install\ Certificates.command  -->
+ 
+### fatal error: 'features.h' file not found
+
+检查 地址`./third_party/android_ndk/toolchains/llvm/prebuilt/darwin-x86_64/`
+查看darwin-x86_64是否存在，不存在则复制本地的NDK的darwin-x86_64文件夹
+
+### 其他参考
+
+<https://www.jianshu.com/p/435fc02819a0>
+
+
 ## Goals
 
 1. Provide high quality Rust bindings to [V8's C++
