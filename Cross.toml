@@ -1,5 +1,5 @@
 [target.aarch64-linux-android]
-image = "ghcr.io/cross-rs/aarch64-linux-android:edge"
+image = "aarch64-android-rusty-v8:v1"
 
 [build.env]
 passthrough = [
@@ -8,4 +8,6 @@ passthrough = [
   "SCCACHE_LOG",
   "SCCACHE_DIR",
   "SCCACHE_IDLE_TIMEOUT",
+  "NINJA",
+  "GN"
 ]

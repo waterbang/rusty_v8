@@ -1,4 +1,4 @@
-FROM ghcr.io/cross-rs/aarch64-linux-android:edge
+FROM aarch64-android-rusty-v8:v1
 
 RUN apt update && \
 	apt install -y curl && \

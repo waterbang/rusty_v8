@@ -5,6 +5,7 @@
 """This script is used to download prebuilt gn/ninja binaries."""
 
 from __future__ import print_function
+
 import argparse
 import os
 import sys
@@ -57,6 +58,7 @@ def DownloadUrl(url, output_file):
 
 
 def EnsureDirExists(path):
+    print("EnsureDirExists:",path)
     if not os.path.exists(path):
         os.makedirs(path)
 
