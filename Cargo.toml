@@ -1,12 +1,7 @@
 [package]
-name = "v8"
-version = "0.61.0"
-description = "Rust bindings to V8"
-readme = "README.md"
 authors = ["the Deno authors"]
-license = "MIT"
+description = "Rust bindings to V8"
 edition = "2021"
-repository = "https://github.com/denoland/rusty_v8"
 exclude = [
   # To keep the package under the 10mb limit imposed by crates.io we exclude
   # a lot of files that are not needed for the build.
@@ -60,8 +55,7 @@ exclude = [
   "v8/docs/",
   "v8/samples/",
   "v8/test/",
-  "v8/tools/",
-  # These files are required for the build.
+  "v8/tools/", # These files are required for the build.
   "!.gn",
   "!BUILD.gn",
   "!tools/clang/scripts/update.py",
@@ -73,6 +67,14 @@ exclude = [
   "!v8/tools/snapshot/asm_to_inline_asm.py",
   "!v8/tools/testrunner/utils/dump_build_config.py",
 ]
+license = "MIT"
+name = "v8"
+readme = "README.md"
+repository = "https://github.com/denoland/rusty_v8"
+version = "0.61.0"
+
+[build]
+rustc-wrapper = "~/.cargo/bin/sccache"
 
 [features]
 default = ["use_custom_libcxx"]
@@ -106,9 +108,9 @@ name = "build"
 path = "build.rs"
 
 [[bench]]
+harness = false
 name = "function"
 path = "benches/function.rs"
-harness = false
 
 [workspace]
 members = ["examples/android"]

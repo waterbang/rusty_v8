@@ -1,8 +1,8 @@
-FROM rustembedded/cross:aarch64-linux-android-0.2.1
+FROM aarch64-android-rusty-v8:v1
 
 RUN apt update && \
-    apt install -y curl && \
-    curl -L https://github.com/mozilla/sccache/releases/download/v0.2.15/sccache-v0.2.15-x86_64-unknown-linux-musl.tar.gz | tar xzf -
+	apt install -y curl && \
+	curl -L https://github.com/mozilla/sccache/releases/download/v0.3.3/sccache-dist-v0.3.3-x86_64-unknown-linux-musl.tar.gz | tar xzf -
 
 ENV TZ=Etc/UTC
 COPY ./build/*.sh /chromium_build/
@@ -14,7 +14,7 @@ RUN \
 	&& rm -rf /chromium_build \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN chmod +x /sccache-v0.2.15-x86_64-unknown-linux-musl/sccache
+RUN chmod +x /sccache-dist-v0.3.3-x86_64-unknown-linux-musl/sccache
 
-ENV SCCACHE=/sccache-v0.2.15-x86_64-unknown-linux-musl/sccache
+ENV SCCACHE=/sccache-dist-v0.3.3-x86_64-unknown-linux-musl/sccache
 ENV SCCACHE_DIR=./target/sccache
